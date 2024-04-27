@@ -29,7 +29,7 @@ public:
         , size_(size)
         , capacity_(size)  
     {
-        ExchangeEmptyWithValues(begin(), end(), value);
+        std::generate(begin(), end(), [value]() { return value;});
     }
 
     SimpleVector(std::initializer_list<Type> init) 
@@ -132,7 +132,7 @@ public:
         if (size_ > new_size) {
             size_ = new_size;
         } else if (capacity_ >= new_size) {
-            ExchangeEmptyWithValues(end(), begin() + new_size, Type());
+            std::generate(end(), begin() + new_size, []() { return Type();});
             size_ = new_size;
         } else {
             ArrayPtr<Type> new_ptr(new_size * 2);
@@ -178,8 +178,7 @@ public:
     }
     
     Iterator Insert(ConstIterator pos, const Type& value) {
-        assert(pos >= cbegin());
-        assert(pos <= cend());
+        assert(pos >= cbegin() && pos <= cend());
         int index = (distance(cbegin(), pos)); 
         if (size_ + 1 <= capacity_) {
             std::copy(begin() + index, end(), begin() + index + 1);
@@ -203,8 +202,7 @@ public:
     }
 
     Iterator Insert(ConstIterator pos, Type&& value) {
-        assert(pos >= cbegin());
-        assert(pos <= cend());
+        assert(pos >= cbegin() && pos <= cend());
         int index = (std::distance(cbegin(), pos));
         if (size_ + 1 <= capacity_) {
             std::move(std::make_move_iterator(begin() + index), std::make_move_iterator(end()), begin() + index + 1);
@@ -246,8 +244,7 @@ public:
     }
 
     Iterator Erase(ConstIterator pos) {
-        assert(pos >= cbegin());
-        assert(pos < cend());
+        assert(pos >= cbegin() && pos < cend());
         Iterator mutable_pos = begin() + (pos - cbegin());
         std::copy(std::make_move_iterator(mutable_pos + 1), std::make_move_iterator(end()), mutable_pos);
         --size_;
@@ -289,14 +286,7 @@ public:
     ArrayPtr<Type> ptr_;
     size_t size_ = 0;
     size_t capacity_ = 0;
-    
-    void ExchangeEmptyWithValues(const Iterator begin, const Iterator end, Type value) {
-        auto it = begin;
-        while (it != end) {
-            std::exchange(*it, std::move(value));
-            it++;
-        }
-    }  
+
 };
 
 template <typename Type>
