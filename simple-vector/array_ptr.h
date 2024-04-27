@@ -34,8 +34,9 @@ public:
     }
     
     ArrayPtr& operator=(ArrayPtr&& other) {
-        assert(&other != this);
-        swap(other);
+        if (&other != this) {
+            swap(other);
+        }
         return *this;
     }
 
