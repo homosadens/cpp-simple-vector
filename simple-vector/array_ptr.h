@@ -30,17 +30,17 @@ public:
     ArrayPtr& operator=(const ArrayPtr&) = delete;
 
     ArrayPtr(ArrayPtr&& other) {
-        raw_ptr_ = exchange(other.raw_ptr_, nullptr);
+        raw_ptr_ = std::exchange(other.raw_ptr_, nullptr);
     }
     
     ArrayPtr& operator=(ArrayPtr&& other) {
+        assert(&other != this);
         swap(other);
         return *this;
     }
 
     [[nodiscard]] Type* Release() noexcept {
-        Type* ptr = raw_ptr_;
-        raw_ptr_ = nullptr;
+        Type* ptr = std::exchange(raw_ptr_, nullptr);
         return ptr;
     }
 
