@@ -62,9 +62,7 @@ public:
                 Clear();
                 return *this;
             }
-            SimpleVector tmp(rhs.GetSize());
-            std::copy(rhs.begin(), rhs.end(), tmp.begin());
-            tmp.capacity_ = rhs.GetCapacity();
+            SimpleVector tmp(rhs);
             swap(tmp);
         }
         return *this;
@@ -76,9 +74,7 @@ public:
                 Clear();
                 return *this;
             }
-            SimpleVector tmp(rhs.size_);
-            std::move(std::make_move_iterator(rhs.begin()), std::make_move_iterator(rhs.end()), tmp.begin());
-            std::exchange(tmp.capacity_, rhs.capacity_);
+            SimpleVector tmp = std::move(rhs);
             swap(tmp);
         }
         return *this;
